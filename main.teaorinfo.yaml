@@ -8,7 +8,7 @@ resources:
       region: europe-central1
       zone: eu-central1-a
       vmtype: e2-standard-2
-      linuxType: ubuntu-2204-lts # debian-11-bullseye-v20250311
+      linuxType: ubuntu-2004-lts # debian-11-bullseye-v20250311
       diskSizeGb: 64
       startup-script: |
         #!/bin/bash
@@ -16,7 +16,7 @@ resources:
         TEAORINFO_HOST=host.teaor.info
         CUSTOM_SSH_KEY=
         ### default settings(basically no need to change) ###
-        TEAORINFO_DOCKER_REPO=https://github.com/ZotyaNET/teaorinfo
+        TEAORINFO_DOCKER_REPO=https://github.com/ZotyaNET/teaorinfo-docker
         TEAORINFO_DOCKER_REPO_BRANCH=master
         TEAORINFO_REVERSEPROXY=nginx
         ACME_CA_URI:=https://acme-staging.api.letsencrypt.org/directory
