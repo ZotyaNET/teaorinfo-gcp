@@ -1,4 +1,4 @@
-# BTCPayServer Google Cloud
+# teaor.info
 
 Instructions to deploy teaor.info server.
 
