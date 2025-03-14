@@ -1,0 +1,31 @@
+resources:
+- type: compute.v1.address
+  name: {{ env["deployment"] }}-address
+  properties:
+    region: {{ properties["region"] }}
+
+- type: compute.v1.instance
+  name: {{ env["deployment"] }}-vm
+  properties:
+    zone: {{ properties["zone"] }}
+    machineType: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/machineTypes/{{properties["vmtype"]}}
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          {{ properties["startup-script"]|indent(10) }}
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: projects/ubuntu-os-cloud/global/images/family/{{properties["linuxType"]}}
+        diskSizeGb: {{properties["diskSizeGb"]}}
+        diskType: projects/{{ env["project"] }}/zones/{{ properties["zone"] }}/diskTypes/pd-ssd
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/global/networks/default
+      accessConfigs:
+      - name: External
+        type: ONE_TO_ONE_NAT
+        natIP: $(ref.{{ env["deployment"] }}-address.address)

@@ -1,0 +1,49 @@
+imports:
+  - path: vm.jinja
+resources:
+  - name: deploy-teaorinfo-vm-with-teaorinfo-server
+    type: vm.jinja
+    properties:
+      ############  EDIT PROPERTY START HERE ##############
+      region: europe-central1
+      zone: eu-central1-a
+      vmtype: e2-standard-2
+      linuxType: ubuntu-2204-lts # debian-11-bullseye-v20250311
+      diskSizeGb: 64
+      startup-script: |
+        #!/bin/bash
+        ### mandatory settings ###
+        TEAORINFO_HOST=host.teaor.info
+        CUSTOM_SSH_KEY=
+        ### default settings(basically no need to change) ###
+        TEAORINFO_DOCKER_REPO=https://github.com/ZotyaNET/teaorinfo
+        TEAORINFO_DOCKER_REPO_BRANCH=master
+        TEAORINFO_REVERSEPROXY=nginx
+        ACME_CA_URI:=https://acme-staging.api.letsencrypt.org/directory
+        ############  EDIT PROPERTY END HERE ##############
+        ### Script below
+        if ! [ -x "$(command -v git)" ]; then
+            apt-get update 2>error
+            apt-get install -y git 2>error
+        fi
+        # Setup SSH access via private key
+        ssh-keygen -t rsa -f /root/.ssh/id_rsa_teaorinfo -q -P ""
+        echo "# Key used by teaor.info server" >> /root/.ssh/authorized_keys
+        cat /root/.ssh/id_rsa_teaorinfo.pub >> /root/.ssh/authorized_keys
+        if [[ "$CUSTOM_SSH_KEY" ]]; then
+            echo "" >> /root/.ssh/authorized_keys
+            echo "# User key" >> /root/.ssh/authorized_keys
+            echo "$CUSTOM_SSH_KEY" >> /root/.ssh/authorized_keys
+            echo "Custom SSH Key added to /root/.ssh/authorized_keys"
+        fi
+        sed -i -e '/^PasswordAuthentication / s/ .*/ no/' /etc/ssh/sshd_config
+        userdel -r -f temp
+        # Configure teaor.info to have access to SSH
+       TEAORINFO_HOST_SSHKEYFILE=/root/.ssh/id_rsa_teaorinfo
+        # Clone teaorinfo repo
+        git clone $TEAORINFO_DOCKER_REPO
+        cd teaorinfo
+        git checkout $TEAORINFO_DOCKER_REPO_BRANCH
+        . cp .env.dev .env && make install
+        [ -x "$(command -v /etc/init.d/sshd)" ] && nohup /etc/init.d/sshd restart &
+        [ -x "$(command -v /etc/init.d/ssh)" ] && nohup /etc/init.d/ssh restart &
