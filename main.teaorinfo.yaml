@@ -39,7 +39,7 @@ resources:
         sed -i -e '/^PasswordAuthentication / s/ .*/ no/' /etc/ssh/sshd_config
         userdel -r -f temp
         # Configure teaor.info to have access to SSH
-       TEAORINFO_HOST_SSHKEYFILE=/root/.ssh/id_rsa_teaorinfo
+        TEAORINFO_HOST_SSHKEYFILE=/root/.ssh/id_rsa_teaorinfo
         # Clone teaorinfo repo
         git clone $TEAORINFO_DOCKER_REPO
         cd teaorinfo
