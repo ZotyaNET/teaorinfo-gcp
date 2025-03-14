@@ -8,7 +8,7 @@ resources:
       region: europe-central1
       zone: eu-central1-a
       vmtype: e2-standard-2
-      linuxType: ubuntu-2004-lts # debian-11-bullseye-v20250311
+      linuxType: ubuntu-2204-lts # debian-11-bullseye-v20250311
       diskSizeGb: 64
       startup-script: |
         #!/bin/bash
