@@ -41,7 +41,7 @@ resources:
         # Configure teaor.info to have access to SSH
         BUSINESS_HOST_SSHKEYFILE=/root/.ssh/id_rsa_business
         # Clone business repo
-        git clone $TEAORINFO_DOCKER_REPO
+        git clone $BUSINESS_DOCKER_REPO
         cd business-docker
         git checkout $BUSINESS_DOCKER_REPO_BRANCH
         # . cp .env.dev .env && make install
